@@ -6,14 +6,31 @@ function init(){
   canvas = document.querySelector("#myCanvas");
   ctx = canvas.getContext("2d");
 }
+class Personnage{
+  
+  constructor(nom, vie, posx, posy, vx, vy, l, h) {
+		this.nom = nom; 
+		this.vie = vie; //0 à 100
+		this.positionX = posx;
+        this.positionY = posy;
+		this.vitesseX = vx;
+        this.vitesseY = vy;
+		this.width = l;
+		this.height = h;
+	}
+  function deplacement(){
+   
+     } 
 
-class Personnage {
-  constructor(x, y, size) {
-    this.x = x;
-    this.y = y;
-    this.size = size;
+  function perteVie(val){
+    this.vie-=val;
   }
-  touchesWall(){
+  
+  function vie(){
+    return this.vie;
+  }
+  
+   touchesWall(){
     if (
         this.center.x - 0.5 * this.size < 0 ||
         this.center.y + 0.5 * this.size > canvas.height ||
@@ -38,6 +55,55 @@ class Personnage {
         return false;
     }
   }
+  
+  
+}
+
+class Joueur extends Personnage{
+  
+    constructor(posx, posy, coul, vx, vy, l, h) {
+		super(posx, posy, coul, vx, vy, l, h);
+		
+	}
+  
+  function deplacement(){
+      var key_pressed; 
+     if(event == null){
+          key_pressed = window.event.keyCode; 
+     }
+     else {
+          key_pressed = event.keyCode; 
+     }
+     switch(key_pressed){
+          case 37:
+               left=true;
+               break; 
+         
+          case 39:
+               right=true;
+               break;
+       
+  }
+  }
+  
+}
+
+class Boss extends Personnage{
+  
+  constructor(nom, vie, posx, posy, vx, vy, l, h) {
+		this.nom = nom; 
+		this.vie = vie; //0 à 100
+		this.positionX = posx;
+        this.positionY = posy;
+		this.vitesseX = vx;
+        this.vitesseY = vy;
+		this.width = l;
+		this.height = h;
+	}
+}
+
+
+
 }
 /*
 class navette{}
