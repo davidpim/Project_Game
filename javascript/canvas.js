@@ -1,6 +1,6 @@
 window.onload = init;
 var gf;
-let canvas, ctx;
+
 
 function init() {
 	gf = new GameFramework();
@@ -11,16 +11,50 @@ function init() {
 
 function GameFramework(){
 
-  let canvas, ctx, size;
+  let canvas, ctx, w, h;
   let tirs = [];
   let bosses = [];
+	//choix d'un tableau car certain niveaux possèdent 2 boss
+	let objetsVisibles = [];
+	let joueur;
+  //let Joueurs = [];
+
 
   function init(){
     canvas = document.querySelector("#myCanvas");
     ctx = canvas.getContext("2d");
-    requestAnimationFrame(anime)
+		w = canvas.width;
+		h = canvas.height;
+		//nom, type, vie, posx, posy, vx, vy, l, h
+		joueur = new Joueur("Joueur", -1, 100,0,600,1,0,100,100);
+		let boss1 = new Boss("Boss Mme Ribouchon", 1, 100,0,600,1,0,100,100);
+		bosses.push(boss1);
+		let boss2 = new Boss("Boss M Tounsi", 2, 100,0,600,1,0,100,100);
+		let boss3 = new Boss("Boss M Anigo", 2, 100,0,600,1,0,100,100);
+		bosses.push(boss2);
+		bosses.push(boss3);
+		let boss4 = new Boss("Boss M Buffa", 3, 100,0,600,1,0,100,100);
+		let boss5 = new Boss("Boss M Miranda", 3, 100,0,600,1,0,100,100);
+		bosses.push(boss4);
+		bosses.push(boss5);
+
+    requestAnimationFrame(anime);
+
   }
 
+  function anime(timeElapsed){
+		//tout le temps appelé
+    ctx.clearRect(0,0,size,size);
+
+		objetsVisibles.forEach(function(r)){
+			r.draw(ctx);
+			r.move();
+			r.collision();
+
+		}
+
+
+  }
 }
 
 
@@ -29,8 +63,9 @@ function GameFramework(){
 
 class Personnage{
 
-  constructor(nom, vie, posx, posy, vx, vy, size) {
+  constructor(nom, type, vie, posx, posy, vx, vy, size) {
 		this.nom = nom;
+		this.type = type;
 		this.vie = vie; //0 à 100
 		this.positionX = posx;
     this.positionY = posy;
@@ -41,6 +76,9 @@ class Personnage{
   function deplacement(){
 
      }
+	function setNom(nom){
+		this.nom=nom;
+	}
 
   function perteVie(val){
     this.vie-=val;
@@ -81,8 +119,8 @@ class Personnage{
 
 class Joueur extends Personnage{
 
-    constructor(posx, posy, coul, vx, vy, l, h) {
-		super(posx, posy, coul, vx, vy, l, h);
+    constructor(nom, type, vie, posx, posy, vx, vy, size) {
+		super(nom, type, vie, posx, posy, vx, vy, size);
 
 	}
 
@@ -104,21 +142,39 @@ class Joueur extends Personnage{
                break;
 
   }
+
+	function draw(){
+		ctx.save();
+  	ctx.translate(-50, -10);
+  	ctx.fillStyle = "grey"; // valeur = une couleur CSS3
+  	ctx.fillRect(0, 0, 100, 100);
+  	ctx.fillStyle = "chartreuse";
+  	ctx.fillRect(10,10,30,10);
+	  ctx.fillRect(70,80,30,10);
+	  ctx.strokeStyle = "chartreuse";
+	  ctx.moveTo(50,0);
+	  ctx.lineTo(50,0);
+	  ctx.lineTo(50,30);
+	  ctx.lineTo(95,30);
+	  ctx.lineTo(95,70);
+	  ctx.lineTo(80,70);
+	  ctx.lineTo(80,80);
+	  ctx.lineTo(80,70);
+	  ctx.lineTo(30,70);
+	  ctx.lineTo(30,20);
+	  ctx.lineTo(30,70);
+	  ctx.lineTo(0,70);
+	  ctx.stroke();
+	}
+
   }
 
 }
 
 class Boss extends Personnage{
 
-  constructor(nom, vie, posx, posy, vx, vy, l, h) {
-		this.nom = nom;
-		this.vie = vie; //0 à 100
-		this.positionX = posx;
-        this.positionY = posy;
-		this.vitesseX = vx;
-        this.vitesseY = vy;
-		this.width = l;
-		this.height = h;
+	constructor(nom, type, vie, posx, posy, vx, vy, size) {
+		super(nom, type, vie, posx, posy, vx, vy, size);
 	}
 }
 
