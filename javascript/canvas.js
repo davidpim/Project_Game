@@ -1,7 +1,7 @@
 window.onload = init;
 var gf;
 
-//test
+
 function init() {
 	gf = new GameFramework();
 	gf.init();
@@ -57,33 +57,44 @@ function GameFramework(){
   }
 }
 
+
+
+
+
 class Personnage{
 
-  constructor(nom, type, maxVie, posx, posy, vx, vy, size) {
+  constructor(nom, type, vie, posx, posy, vx, vy, size) {
 		this.nom = nom;
 		this.type = type;
-		this.vie = 0; //0 à 100
-		this.maxVie = maxVie;
+		this.vie = vie; //0 à 100
 		this.positionX = posx;
     this.positionY = posy;
 		this.vitesseX = vx;
     this.vitesseY = vy;
 		this.size = size;
 	}
+
+	function persoTouche(x,y){
+		if(x>this.posX && x<this.posX+100 && y>this.posY && y<this.posY+100){
+			return true;
+		}
+		return false;
+	}
+
   function deplacement(){
-		// c'est quoi?
-     }
+		
+  }
+
 	function setNom(nom){
 		this.nom=nom;
 	}
 
   function perteVie(val){
-    this.vie-=val; //?
+    this.vie-=val;
   }
 
   function vie(){
     return this.vie;
-		//Pas besoin je pense
   }
 
    touchesWall(){
@@ -116,9 +127,13 @@ class Personnage{
 }
 
 class Joueur extends Personnage{
-    constructor(nom, type, maxVie, posx, posy, vx, vy, size) {
-		super(nom, type, maxVie, posx, posy, vx, vy, size);
+
+    constructor(nom, type, vie, posx, posy, vx, vy, size) {
+		super(nom, type, vie, posx, posy, vx, vy, size);
+
 	}
+
+
 
   function deplacement(){
       var key_pressed;
@@ -161,6 +176,7 @@ class Joueur extends Personnage{
 	  ctx.lineTo(30,70);
 	  ctx.lineTo(0,70);
 	  ctx.stroke();
+		ctx.restore();
 	}
 
   }
@@ -169,8 +185,34 @@ class Joueur extends Personnage{
 
 class Boss extends Personnage{
 
-	constructor(nom, type, maxVie, posx, posy, vx, vy, size) {
-		super(nom, type, maxVie, posx, posy, vx, vy, size);
+	constructor(nom, type, vie, posx, posy, vx, vy, size) {
+		super(nom, type, vie, posx, posy, vx, vy, size);
+	}
+
+	function draw(){
+		ctx.save();
+		ctx.translate(-50, -10);
+		ctx.fillStyle = "grey"; // valeur = une couleur CSS3
+		ctx.fillRect(0, 0, 100, 100);
+		ctx.fillStyle = "red";
+		ctx.fillRect(10,10,30,10);
+		ctx.fillRect(70,80,30,10);
+		ctx.strokeStyle = "red";
+		ctx.moveTo(50,0);
+		ctx.lineTo(50,0);
+		ctx.lineTo(50,30);
+		ctx.lineTo(95,30);
+		ctx.lineTo(95,70);
+		ctx.lineTo(80,70);
+		ctx.lineTo(80,80);
+		ctx.lineTo(80,70);
+		ctx.lineTo(30,70);
+		ctx.lineTo(30,20);
+		ctx.lineTo(30,70);
+		ctx.lineTo(0,70);
+		ctx.stroke();
+		ctx.restore();
+
 	}
 }
 
