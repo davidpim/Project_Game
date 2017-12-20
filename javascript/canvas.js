@@ -1,7 +1,7 @@
 window.onload = init;
 var gf;
 
-
+//test
 function init() {
 	gf = new GameFramework();
 	gf.init();
@@ -57,16 +57,13 @@ function GameFramework(){
   }
 }
 
-
-
-
-
 class Personnage{
 
-  constructor(nom, type, vie, posx, posy, vx, vy, size) {
+  constructor(nom, type, maxVie, posx, posy, vx, vy, size) {
 		this.nom = nom;
 		this.type = type;
-		this.vie = vie; //0 à 100
+		this.vie = 0; //0 à 100
+		this.maxVie = maxVie;
 		this.positionX = posx;
     this.positionY = posy;
 		this.vitesseX = vx;
@@ -74,18 +71,19 @@ class Personnage{
 		this.size = size;
 	}
   function deplacement(){
-
+		// c'est quoi?
      }
 	function setNom(nom){
 		this.nom=nom;
 	}
 
   function perteVie(val){
-    this.vie-=val;
+    this.vie-=val; //?
   }
 
   function vie(){
     return this.vie;
+		//Pas besoin je pense
   }
 
    touchesWall(){
@@ -118,10 +116,8 @@ class Personnage{
 }
 
 class Joueur extends Personnage{
-
-    constructor(nom, type, vie, posx, posy, vx, vy, size) {
-		super(nom, type, vie, posx, posy, vx, vy, size);
-
+    constructor(nom, type, maxVie, posx, posy, vx, vy, size) {
+		super(nom, type, maxVie, posx, posy, vx, vy, size);
 	}
 
   function deplacement(){
@@ -173,8 +169,8 @@ class Joueur extends Personnage{
 
 class Boss extends Personnage{
 
-	constructor(nom, type, vie, posx, posy, vx, vy, size) {
-		super(nom, type, vie, posx, posy, vx, vy, size);
+	constructor(nom, type, maxVie, posx, posy, vx, vy, size) {
+		super(nom, type, maxVie, posx, posy, vx, vy, size);
 	}
 }
 
