@@ -48,7 +48,7 @@ function GameFramework(){
 
 		objetsVisibles.forEach(function(r)){
 			r.draw(ctx);
-			r.move();
+			r.deplacement();
 			r.collision();
 
 		}
@@ -82,7 +82,7 @@ class Personnage{
 	}
 
   function deplacement(){
-		
+
   }
 
 	function setNom(nom){
@@ -96,7 +96,7 @@ class Personnage{
   function vie(){
     return this.vie;
   }
-
+/*
    touchesWall(){
     if (
         this.center.x - 0.5 * this.size < 0 ||
@@ -121,7 +121,7 @@ class Personnage{
     else {
         return false;
     }
-  }
+  }*/
 
 
 }
@@ -135,7 +135,7 @@ class Joueur extends Personnage{
 
 
 
-  function deplacement(){
+  function deplacement(canvasXMin,canvasXMax){
       var key_pressed;
      if(event == null){
           key_pressed = window.event.keyCode;
@@ -144,17 +144,21 @@ class Joueur extends Personnage{
           key_pressed = event.keyCode;
      }
      switch(key_pressed){
-          case 37:
-               left=true;
-               break;
+          case 37: //left
+							if(this.posX>canvasXMin){
+								x-=1;
+							}
+							break;
 
-          case 39:
-               right=true;
-               break;
-
+          case 39: //right
+						if(this.posX<canvasXMax){
+					 		x+=1;
+				 		}
+          	break;
+		}
   }
 
-	function draw(){
+	function draw(ctx){
 		ctx.save();
   	ctx.translate(-50, -10);
   	ctx.fillStyle = "grey"; // valeur = une couleur CSS3
@@ -179,9 +183,12 @@ class Joueur extends Personnage{
 		ctx.restore();
 	}
 
-  }
+
+
 
 }
+
+
 
 class Boss extends Personnage{
 
@@ -189,7 +196,7 @@ class Boss extends Personnage{
 		super(nom, type, vie, posx, posy, vx, vy, size);
 	}
 
-	function draw(){
+	function draw(ctx){
 		ctx.save();
 		ctx.translate(-50, -10);
 		ctx.fillStyle = "grey"; // valeur = une couleur CSS3
