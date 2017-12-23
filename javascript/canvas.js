@@ -50,8 +50,9 @@ function GameFramework(){
 		bosses.push(boss5);*/
         creationObjs();
 				//let k = new Boss("Joueur", -1, 400,300,520,100,0,100);
-
+setInterval(console.log("ok"), 1000);
     requestAnimationFrame(anime);
+
 
   }
 
@@ -73,7 +74,7 @@ function GameFramework(){
 			r.deplacement();
 		});
 
-
+		
 		requestAnimationFrame(anime);
 
   }
@@ -91,7 +92,7 @@ function GameFramework(){
     //nom, type, vie, posx, posy, vx, vy, l, h
     let j = new Joueur("Joueur", -1, 400,300,520,100,0,100);
 		let k = new Boss("Boss", -1, 400,100,200,3,1,100);
-		let m = new Munition("ok",100,300,2);
+		let m = new Munition("ok","joueur",100,300,2);
 		Munitions.push(m);
     Joueurs.push(j);
 		Bosses.push(k);
@@ -171,6 +172,7 @@ class Joueur extends Personnage{
     constructor(nom, type, vie, posx, posy, vx, vy, size) {
 		super(nom, type, vie, posx, posy, vx, vy, size);
 
+
 	}
 
   draw(ctx){
@@ -234,30 +236,25 @@ class Joueur extends Personnage{
 
 class Boss extends Personnage{
 
-	constructor(nom, type, vie, posx, posy, vx, vy, size) {
+	constructor(nom, type, vie, posx, posy, vx, vy, size,munition) {
 	super(nom, type, vie, posx, posy, vx, vy, size);
+	this.munition=munition;
+	this.tirs=[];
+	this.tirs.length=5;
+	for(var i=0;i<5;i++){
+		this.tirs[i]=munition;
+	}
+
+
+	 console.log(this.tirs.length);
+
 	}
 
 	draw(ctx){
 		ctx.save();
 		ctx.translate(this.posx,this.posy)
   	ctx.drawImage(boss,0,0,80,80);
-		ctx.fillStyle = "red	";
-		ctx.fillRect(10,10,30,10);
 
-		ctx.strokeStyle = "red";
-		ctx.beginPath();
-		ctx.lineWidth = 2;
-		ctx.moveTo(50,0);
-		ctx.lineTo(50,0);
-		ctx.lineTo(50,30);
-		ctx.lineTo(79,30);
-		ctx.lineTo(79,70);
-		ctx.lineTo(30,70);
-		ctx.lineTo(30,20);
-		ctx.lineTo(30,70);
-		ctx.lineTo(0,70);
-		ctx.stroke();
 		ctx.restore();
 
 	}
@@ -275,12 +272,14 @@ class Boss extends Personnage{
 
 	tirs(){
 
+
 	}
 }
 
 class Munition{
-	constructor(nom,posx,posy,vitesse){
+	constructor(nom,type,posx,posy,vitesse){
 		this.nom=nom;
+		this.type=type;
 		this.posx=posx;
 		this.posy=posy;
 		this.vitesse=vitesse;
@@ -297,12 +296,18 @@ class Munition{
 	}
 
 	estSortie(){
-		return false;
+
 	}
 
 	deplacement(){
-		this.posx += this.angleR;
-  	this.posy += this.vitesse;
+		if(this.type=="joueur"){
+			this.posx -= this.angleR;
+	  	this.posy -= this.vitesse;
+		}else{
+			this.posx += this.angleR;
+	  	this.posy += this.vitesse;
+		}
+
 
 	}
 
