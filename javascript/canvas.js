@@ -20,6 +20,7 @@ function GameFramework(){
   let canvas, ctx, w, h;
   //let tirs = [];
   let Bosses = [];
+	let TirsBoss = [];
 	//choix d'un tableau car certain niveaux possèdent 2 boss
 	let objetsVisibles = [];
 	//let joueur;
@@ -68,13 +69,12 @@ setInterval(console.log("ok"), 1000);
 		Bosses.forEach(function(r){
 			r.draw(ctx);
 			r.deplacement();
-		});
-		Munitions.forEach(function(r){
-			r.draw(ctx);
-			r.deplacement();
+			r.tir(ctx,w,h);
 		});
 
-		
+
+
+
 		requestAnimationFrame(anime);
 
   }
@@ -92,8 +92,8 @@ setInterval(console.log("ok"), 1000);
     //nom, type, vie, posx, posy, vx, vy, l, h
     let j = new Joueur("Joueur", -1, 400,300,520,100,0,100);
 		let k = new Boss("Boss", -1, 400,100,200,3,1,100);
-		let m = new Munition("ok","joueur",100,300,2);
-		Munitions.push(m);
+
+
     Joueurs.push(j);
 		Bosses.push(k);
   }
@@ -230,33 +230,18 @@ class Joueur extends Personnage{
 
 
 
-
-
-
-
 class Boss extends Personnage{
 
-	constructor(nom, type, vie, posx, posy, vx, vy, size,munition) {
+	constructor(nom, type, vie, posx, posy, vx, vy, size) {
 	super(nom, type, vie, posx, posy, vx, vy, size);
-	this.munition=munition;
-	this.tirs=[];
-	this.tirs.length=5;
-	for(var i=0;i<5;i++){
-		this.tirs[i]=munition;
-	}
-
-
-	 console.log(this.tirs.length);
-
+	this.munition = new Munition("m1","boss",this.posx+40,this.posy+80,4);
 	}
 
 	draw(ctx){
 		ctx.save();
 		ctx.translate(this.posx,this.posy)
   	ctx.drawImage(boss,0,0,80,80);
-
 		ctx.restore();
-
 	}
 
 	deplacement(){
@@ -270,9 +255,12 @@ class Boss extends Personnage{
   	}
 	}
 
-	tirs(){
-
-
+	tir(ctx,w,h){
+		this.munition.draw(ctx);
+		this.munition.deplacement();
+		if(this.munition.estSortie(w,h)==true){
+			this.munition=new Munition("m1","boss",this.posx+40,this.posy+80,4);
+		}
 	}
 }
 
@@ -284,7 +272,6 @@ class Munition{
 		this.posy=posy;
 		this.vitesse=vitesse;
 		this.angleR=Math.random() * (2 - (-2)) + (-2);
-
 	}
 
 	draw(ctx){
@@ -295,8 +282,12 @@ class Munition{
 		ctx.restore();
 	}
 
-	estSortie(){
-
+	estSortie(w,h){
+		if(this.posx>w || this.posx<0 || this.posy>h || this.posy<90){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	deplacement(){
@@ -307,13 +298,14 @@ class Munition{
 			this.posx += this.angleR;
 	  	this.posy += this.vitesse;
 		}
-
-
 	}
 
 	collision(joueur){
-
-
+		if(this.posx>=joueur.posx && this.posy>=joueur.posy){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }
 
