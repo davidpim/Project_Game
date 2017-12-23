@@ -64,12 +64,17 @@ setInterval(console.log("ok"), 1000);
 		Joueurs.forEach(function(r){
 			r.draw(ctx);
 			r.deplacement();
+			r.vieR(ctx);
 	    r.posx=positionJ;
+
 		});
 		Bosses.forEach(function(r){
 			r.draw(ctx);
 			r.deplacement();
-			r.tir(ctx,w,h);
+			r.tir(ctx,Joueurs[0],w,h);
+			r.vieR(ctx);
+			r.perteVie();
+			console.log(r.vie);
 		});
 
 
@@ -90,8 +95,8 @@ setInterval(console.log("ok"), 1000);
 
   function creationObjs(){
     //nom, type, vie, posx, posy, vx, vy, l, h
-    let j = new Joueur("Joueur", -1, 400,300,520,100,0,100);
-		let k = new Boss("Boss", -1, 400,100,200,3,1,100);
+    let j = new Joueur("Joueur", -1, 100,300,520,100,0,100);
+		let k = new Boss("Boss", -1, 100,100,200,3,1,100);
 
 
     Joueurs.push(j);
@@ -177,7 +182,7 @@ class Joueur extends Personnage{
 
   draw(ctx){
 		ctx.save();
-		ctx.translate(this.posx,this.posy)
+		ctx.translate(this.posx,this.posy);
   	ctx.fillStyle = "grey"; // valeur = une couleur CSS3
 		ctx.fillRect(0, 0, 80, 80);
 		ctx.fillStyle = "chartreuse";
@@ -199,7 +204,12 @@ class Joueur extends Personnage{
 		ctx.restore();
 	}
 
-
+	vieR(ctx){
+		ctx.save();
+  	ctx.fillStyle = "chartreuse"; // valeur = une couleur CSS3
+		ctx.fillRect(11, 62, this.vie*3.05, 20); //0 à 305
+		ctx.restore();
+	}
 
   deplacement(){
 
@@ -234,7 +244,7 @@ class Boss extends Personnage{
 
 	constructor(nom, type, vie, posx, posy, vx, vy, size) {
 	super(nom, type, vie, posx, posy, vx, vy, size);
-	this.munition = new Munition("m1","boss",this.posx+40,this.posy+80,4);
+	this.munition = new Munition("m1","boss",this.posx+40,this.posy+80,8);
 	}
 
 	draw(ctx){
@@ -255,17 +265,33 @@ class Boss extends Personnage{
   	}
 	}
 
-	tir(ctx,w,h){
+	tir(ctx,joueur,w,h){
 		this.munition.draw(ctx);
 		this.munition.deplacement();
+		this.munition.collision(joueur);
 		if(this.munition.estSortie(w,h)==true){
-			this.munition=new Munition("m1","boss",this.posx+40,this.posy+80,4);
+			this.munition.posx=this.posx+40;
+			this.munition.posy=this.posy+80;
+			this.munition.angleR=Math.random() * (2 - (-2)) + (-2);
 		}
 	}
+	vieR(ctx){
+		ctx.save();
+		ctx.fillStyle = "red"; // valeur = une couleur CSS3
+		ctx.fillRect(485-((this.vie-100)*3.05), 62, (this.vie*3.05), 20); //0 à 305
+		ctx.restore();
+	}
+
+	perteVie(){
+		if(this.vie>0)
+			this.vie-=0.1;
+	}
+
+
 }
 
 class Munition{
-	constructor(nom,type,posx,posy,vitesse){
+	constructor(nom,type,posx,posy,vitesse,angle){
 		this.nom=nom;
 		this.type=type;
 		this.posx=posx;
@@ -299,14 +325,15 @@ class Munition{
 	  	this.posy += this.vitesse;
 		}
 	}
-
 	collision(joueur){
-		if(this.posx>=joueur.posx && this.posy>=joueur.posy){
-			return true;
-		}else{
-			return false;
-		}
+		if(this.posx>=joueur.posx && this.posx<=joueur.posx+80
+			 && this.posy>=joueur.posy && this.posy<=joueur.posy+80){
+				 if(joueur.vie>0)
+					joueur.vie-=2;
+			 }
+
 	}
+
 }
 
 
