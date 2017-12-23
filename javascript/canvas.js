@@ -2,7 +2,11 @@ window.onload = init;
 var gf;
 var positionJ=200;
 var fond =document.createElement("img");
+var boss =document.createElement("img");
 fond.src="img/fond.jpg";
+boss.src="img/Buffa_Dangerous.png";
+//boss.src="img/Tounsi.png";
+//boss.src="img/Miranda.png";
 
 
 function init() {
@@ -20,6 +24,8 @@ function GameFramework(){
 	let objetsVisibles = [];
 	//let joueur;
   let Joueurs = [];
+	let Munitions = [];
+
 
 
   function init(){
@@ -27,6 +33,7 @@ function GameFramework(){
     ctx = canvas.getContext("2d");
 		w = canvas.width;
 		h = canvas.height;
+		//nom,posx,posy,vitesse
 
 
 		//nom, type, vie, posx, posy, vx, vy, l, h
@@ -61,6 +68,11 @@ function GameFramework(){
 			r.draw(ctx);
 			r.deplacement();
 		});
+		Munitions.forEach(function(r){
+			r.draw(ctx);
+			r.deplacement();
+		});
+
 
 		requestAnimationFrame(anime);
 
@@ -79,6 +91,8 @@ function GameFramework(){
     //nom, type, vie, posx, posy, vx, vy, l, h
     let j = new Joueur("Joueur", -1, 400,300,520,100,0,100);
 		let k = new Boss("Boss", -1, 400,100,200,3,1,100);
+		let m = new Munition("ok",100,300,2);
+		Munitions.push(m);
     Joueurs.push(j);
 		Bosses.push(k);
   }
@@ -192,7 +206,11 @@ class Joueur extends Personnage{
 	    switch (key) {
 	        case 37:
 					if(positionJ>0)
-	        	positionJ-=10;
+
+						positionJ -= 10;
+				  	if((this.posx+80 >= 800) || (this.posx <= 0)){
+				    	this.vx = -this.vx;
+				  	}
 	      	//-Move left
 	        break;
 	    case 39:
@@ -223,8 +241,7 @@ class Boss extends Personnage{
 	draw(ctx){
 		ctx.save();
 		ctx.translate(this.posx,this.posy)
-  	ctx.fillStyle = "grey"; // valeur = une couleur CSS3
-		ctx.fillRect(0, 0, 80, 80);
+  	ctx.drawImage(boss,0,0,80,80);
 		ctx.fillStyle = "red	";
 		ctx.fillRect(10,10,30,10);
 
@@ -247,19 +264,53 @@ class Boss extends Personnage{
 
 	deplacement(){
 		this.posx += this.vx;
-  if((this.posx+80 >= 800) || (this.posx <= 0)){
-    this.vx = -this.vx;
-  }
-   this.posy += this.vy;
-  if((this.posy+80 >= 300) || (this.posy <= 90)){
-    this.vy = -this.vy;
-  }
+  	if((this.posx+80 >= 800) || (this.posx <= 0)){
+    	this.vx = -this.vx;
+  	}
+   	this.posy += this.vy;
+  	if((this.posy+80 >= 300) || (this.posy <= 90)){
+    	this.vy = -this.vy;
+  	}
+	}
 
+	tirs(){
 
 	}
 }
 
+class Munition{
+	constructor(nom,posx,posy,vitesse){
+		this.nom=nom;
+		this.posx=posx;
+		this.posy=posy;
+		this.vitesse=vitesse;
+		this.angleR=Math.random() * (2 - (-2)) + (-2);
 
+	}
+
+	draw(ctx){
+		ctx.save();
+		ctx.translate(this.posx,this.posy)
+  	ctx.fillStyle = "blue"; // valeur = une couleur CSS3
+		ctx.fillRect(0, 0, 10, 10);
+		ctx.restore();
+	}
+
+	estSortie(){
+		return false;
+	}
+
+	deplacement(){
+		this.posx += this.angleR;
+  	this.posy += this.vitesse;
+
+	}
+
+	collision(joueur){
+
+
+	}
+}
 
 
 /*
