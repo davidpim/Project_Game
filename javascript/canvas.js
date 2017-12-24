@@ -378,7 +378,7 @@ class Munition{
 
 function choixNiveau(val){
 	gf.reset();
-	//gf.init();
+	
 	gf.creationObjs(val);
 }
 
