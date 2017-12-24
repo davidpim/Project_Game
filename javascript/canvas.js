@@ -6,7 +6,7 @@ var boss1 =document.createElement("img");
 var boss2 =document.createElement("img");
 var boss3 =document.createElement("img");
 var boss4 =document.createElement("img");
-fond.src="img/fond.jpg";
+fond.src="img/fond.png";
 boss1.src="img/boss1.png";
 boss2.src="img/boss2.png";
 boss3.src="img/boss3.png";
@@ -17,6 +17,7 @@ boss4.src="img/boss4.png";
 function init() {
 	gf = new GameFramework();
 	gf.init();
+	choixNiveau();
 }
 
 function GameFramework(){
@@ -31,6 +32,7 @@ function GameFramework(){
 	//let joueur;
   let Joueurs = [];
 	let Munitions = [];
+	let EtatPartie=null;
 
 
 
@@ -73,7 +75,7 @@ setInterval(console.log("ok"), 1000);
 	    r.posx=positionJ;
 			if(r.vie<=0){
 				defaite();
-				ctx=null;
+				//reset()
 			}
 
 		});
@@ -84,8 +86,9 @@ setInterval(console.log("ok"), 1000);
 			r.vieR(ctx);
 			r.perteVie();
 			if(r.vie<=0){
+				//Joueurs=[];
 				victoire();
-				ctx=null;
+
 			}
 		});
 
@@ -112,34 +115,41 @@ setInterval(console.log("ok"), 1000);
   }
 
 	function victoire(){
-		ctx.fillStyle = "chartreuse";
-		ctx.font = "80px OCR A Std";
-		ctx.fillText("VICTOIRE",170,350);
+		if(EtatPartie==null || EtatPartie==true){
+			ctx.fillStyle = "chartreuse";
+			ctx.font = "80px OCR A Std";
+			ctx.fillText("VICTOIRE",170,350);
+			EtatPartie=true;
+		}
 	}
 
 	function defaite(){
-		ctx.fillStyle = "red";
-		ctx.font = "80px OCR A Std";
-		ctx.fillText("DEFAITE",190,350);
+		if(EtatPartie==null || EtatPartie==false){
+			ctx.fillStyle = "red";
+			ctx.font = "80px OCR A Std";
+			ctx.fillText("DEFAITE",190,350);
+			EtatPartie=false;
+		}
 	}
 
   function creationObjs(val){
 
-    //nom, type, vie, posx, posy, vx, vy, size
+    //nom, type, vie, posx, posy, vx, vy, size,vitesseTir,valeurPerteVieJ
+		EtatPartie=null;
 		if(val==1){
-			let b1 = new Boss("Boss", boss1, 100,100,200,2,1,80,5);
+			let b1 = new Boss("Boss", boss1, 100,100,200,2,1,80,5,2);
 			Bosses.push(b1);
 		}else if(val==2){
-			let b2 = new Boss("Boss", boss2, 100,100,200,3,1,80,8);
+			let b2 = new Boss("Boss", boss2, 100,100,200,3,1,80,8,4);
 			Bosses.push(b2);
 		}else if(val==3){
-			let b3 = new Boss("Boss", boss3, 100,100,200,4,2,80,10);
+			let b3 = new Boss("Boss", boss3, 100,100,200,4,2,80,10,6);
 			Bosses.push(b3);
 		}else if(val==4){
-			let b4 = new Boss("Boss", boss4, 100,100,200,6,3,80,14);
+			let b4 = new Boss("Boss", boss4, 100,100,200,6,3,80,14,8);
 			Bosses.push(b4);
 		}
-    let j = new Joueur("Joueur", -1, 100,300,520,100,0,100);
+    let j = new Joueur("Joueur", -1, 100,300,520,100,0,100,10);
     Joueurs.push(j);
 
   }
@@ -158,57 +168,12 @@ class Personnage{
 		this.vx = vx;
     this.vy = vy;
 		this.size = size;
-    //positionJ=this.posx;
+
 	}
-/*
-	function persoTouche(x,y){
-		if(x>this.posX && x<this.posX+100 && y>this.posY && y<this.posY+100){
-			return true;
-		}
-		return false;
-	}
-*/
+
   deplacement(){
 
   }
-/*
-	function setNom(nom){
-		this.nom=nom;
-	}
-
-  function perteVie(val){
-    this.vie-=val;
-  }
-
-  function vie(){
-    return this.vie;
-  }
-/*
-   touchesWall(){
-    if (
-        this.center.x - 0.5 * this.size < 0 ||
-        this.center.y + 0.5 * this.size > canvas.height ||
-        this.center.y - 0.5 * this.size < 0
-    ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-  }
-  touchesFace(){
-    if (
-        this.center.x - 0.5 * this.size < face.center.x + 0.5 * face.size &&
-        this.center.x + 0.5 * this.size > face.center.x - 0.5 * face.size &&
-        this.center.y + 0.5 * this.size > face.center.y - 0.5 * face.size &&
-        this.center.y - 0.5 * this.size < face.center.y + 0.5 * face.size
-    ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-  }*/
 
 
 }
@@ -281,16 +246,28 @@ class Joueur extends Personnage{
 
 class Boss extends Personnage{
 
-	constructor(nom, type, vie, posx, posy, vx, vy, size,vitesseTir) {
+	constructor(nom, type, vie, posx, posy, vx, vy, size,vitesseTir,valeurPerteVieJ) {
 	super(nom, type, vie, posx, posy, vx, vy, size);
 	this.vitesseTir=vitesseTir;
-	this.munition = new Munition("m1","boss",this.posx+40,this.posy+80,this.vitesseTir);
+	this.valeurPerteVieJ=valeurPerteVieJ;
+	this.munition = new Munition("m1","boss",this.posx+40,this.posy+80,this.vitesseTir,Math.random()*(2-(-2))+(-2),this.valeurPerteVieJ);
+	//nom,type,posx,posy,vitesse,angle,valPerte
 	}
 
 	draw(ctx){
 		ctx.save();
 		ctx.translate(this.posx,this.posy)
   	ctx.drawImage(this.type,0,0,this.size,this.size);
+
+		ctx.strokeStyle = "RED";
+		ctx.beginPath();
+		ctx.lineWidth = 2;
+		ctx.moveTo(0,0);
+		ctx.lineTo(80,0);
+		ctx.lineTo(80,80);
+		ctx.lineTo(0,80);
+		ctx.lineTo(0,0);
+		ctx.stroke();
 		ctx.restore();
 	}
 
@@ -331,13 +308,15 @@ class Boss extends Personnage{
 }
 
 class Munition{
-	constructor(nom,type,posx,posy,vitesse,angle){
+	constructor(nom,type,posx,posy,vitesse,angle,valPerte){
 		this.nom=nom;
 		this.type=type;
 		this.posx=posx;
 		this.posy=posy;
 		this.vitesse=vitesse;
 		this.angleR=Math.random() * (2 - (-2)) + (-2);
+		this.valPerte=valPerte;
+
 	}
 
 	draw(ctx){
@@ -365,11 +344,15 @@ class Munition{
 	  	this.posy += this.vitesse;
 		}
 	}
-	collision(joueur){
+	collision(joueur,valPerte){
+
 		if(this.posx>=joueur.posx && this.posx<=joueur.posx+80
 			 && this.posy>=joueur.posy && this.posy<=joueur.posy+80){
 				 if(joueur.vie>0)
-					joueur.vie-=2;
+					joueur.vie-=this.valPerte;
+					if(joueur.vie<0){
+						joueur.vie=0;
+					}
 			 }
 
 	}
@@ -378,7 +361,6 @@ class Munition{
 
 function choixNiveau(val){
 	gf.reset();
-	
 	gf.creationObjs(val);
 }
 
