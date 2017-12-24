@@ -2,11 +2,16 @@ window.onload = init;
 var gf;
 var positionJ=200;
 var fond =document.createElement("img");
-var boss =document.createElement("img");
+var boss1 =document.createElement("img");
+var boss2 =document.createElement("img");
+var boss3 =document.createElement("img");
+var boss4 =document.createElement("img");
 fond.src="img/fond.jpg";
-boss.src="img/Buffa_Dangerous.png";
-//boss.src="img/Tounsi.png";
-//boss.src="img/Miranda.png";
+boss1.src="img/boss1.png";
+boss2.src="img/boss2.png";
+boss3.src="img/boss3.png";
+boss4.src="img/boss4.png";
+
 
 
 function init() {
@@ -66,6 +71,10 @@ setInterval(console.log("ok"), 1000);
 			r.deplacement();
 			r.vieR(ctx);
 	    r.posx=positionJ;
+			if(r.vie<=0){
+				defaite();
+				ctx=null;
+			}
 
 		});
 		Bosses.forEach(function(r){
@@ -74,33 +83,65 @@ setInterval(console.log("ok"), 1000);
 			r.tir(ctx,Joueurs[0],w,h);
 			r.vieR(ctx);
 			r.perteVie();
-			console.log(r.vie);
+			if(r.vie<=0){
+				victoire();
+				ctx=null;
+			}
 		});
 
-
+		//victoire();
+		//defaite();
 
 
 		requestAnimationFrame(anime);
 
   }
   function reset() {
-		objetsVisibles = []; // on vire tous les objets
+		Bosses = [];
+		Joueurs = []; // on vire tous les objets
+
 
 	}
   return{
         init:init,
-		//reset:reset,
-        creationObjs: creationObjs
+				reset:reset,
+        creationObjs: creationObjs,
+				victoire:victoire,
+				defaite:defaite
+
   }
 
-  function creationObjs(){
-    //nom, type, vie, posx, posy, vx, vy, l, h
+	function victoire(){
+		ctx.fillStyle = "chartreuse";
+		ctx.font = "80px OCR A Std";
+		ctx.fillText("VICTOIRE",170,350);
+	}
+
+	function defaite(){
+		ctx.fillStyle = "red";
+		ctx.font = "80px OCR A Std";
+		ctx.fillText("DEFAITE",190,350);
+	}
+
+  function creationObjs(val){
+
+    //nom, type, vie, posx, posy, vx, vy, size
+		if(val==1){
+			let b1 = new Boss("Boss", boss1, 100,100,200,2,1,80,5);
+			Bosses.push(b1);
+		}else if(val==2){
+			let b2 = new Boss("Boss", boss2, 100,100,200,3,1,80,8);
+			Bosses.push(b2);
+		}else if(val==3){
+			let b3 = new Boss("Boss", boss3, 100,100,200,4,2,80,10);
+			Bosses.push(b3);
+		}else if(val==4){
+			let b4 = new Boss("Boss", boss4, 100,100,200,6,3,80,14);
+			Bosses.push(b4);
+		}
     let j = new Joueur("Joueur", -1, 100,300,520,100,0,100);
-		let k = new Boss("Boss", -1, 100,100,200,3,1,100);
-
-
     Joueurs.push(j);
-		Bosses.push(k);
+
   }
 }
 
@@ -238,19 +279,18 @@ class Joueur extends Personnage{
 
 }
 
-
-
 class Boss extends Personnage{
 
-	constructor(nom, type, vie, posx, posy, vx, vy, size) {
+	constructor(nom, type, vie, posx, posy, vx, vy, size,vitesseTir) {
 	super(nom, type, vie, posx, posy, vx, vy, size);
-	this.munition = new Munition("m1","boss",this.posx+40,this.posy+80,8);
+	this.vitesseTir=vitesseTir;
+	this.munition = new Munition("m1","boss",this.posx+40,this.posy+80,this.vitesseTir);
 	}
 
 	draw(ctx){
 		ctx.save();
 		ctx.translate(this.posx,this.posy)
-  	ctx.drawImage(boss,0,0,80,80);
+  	ctx.drawImage(this.type,0,0,this.size,this.size);
 		ctx.restore();
 	}
 
@@ -336,6 +376,11 @@ class Munition{
 
 }
 
+function choixNiveau(val){
+	gf.reset();
+	//gf.init();
+	gf.creationObjs(val);
+}
 
 /*
 class navette{}
